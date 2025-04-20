@@ -3,26 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/habitListFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="uk.ac.hope.mcse.android.coursework.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
+        android:id="@+id/habitListFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.fragments.HabitListFragment"
+        android:label="Habits"
+        tools:layout="@layout/fragment_habit_list">
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_habitListFragment_to_habitDetailFragment"
+            app:destination="@id/habitDetailFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="uk.ac.hope.mcse.android.coursework.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
 
+    <fragment
+        android:id="@+id/habitDetailFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.fragments.HabitDetailFragment"
+        android:label="Habit Details"
+        tools:layout="@layout/fragment_habit_detail">
+        <argument
+            android:name="habitId"
+            app:argType="string"
+            app:nullable="true" />
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_habitDetailFragment_to_habitListFragment"
+            app:destination="@id/habitListFragment" />
     </fragment>
 </navigation>
