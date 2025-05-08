@@ -3,6 +3,7 @@ package uk.ac.hope.mcse.android.coursework;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -25,27 +26,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        setSupportActionBar(binding.toolbar);
-
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.nav_host_fragment_content_main);
-        navController = navHostFragment.getNavController();
-
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        setContentView(R.layout.activity_main);
 
         FloatingActionButton fab = findViewById(R.id.fab_add_habit);
-        fab.setOnClickListener(view -> {
-            // Navigate to habit detail fragment with null ID for new habit
-            Bundle args = new Bundle();
-            args.putString("habitId", null);
-            navController.navigate(R.id.habitDetailFragment, args);
+
+        // Get NavController using the correct ID from content_main.xml
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+
+        // Set up destination changed listener
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.habitListFragment) {
+                // Show FAB on the list screen
+                fab.setVisibility(View.VISIBLE);
+                fab.setOnClickListener(view -> {
+                    // Navigate to habit detail fragment with null ID for new habit
+                    Bundle args = new Bundle();
+                    args.putString("habitId", null);
+                    navController.navigate(R.id.habitDetailFragment, args);
+                });
+            } else if (destination.getId() == R.id.habitDetailFragment) {
+                // Hide FAB on the detail screen
+                fab.setVisibility(View.GONE);
+            }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

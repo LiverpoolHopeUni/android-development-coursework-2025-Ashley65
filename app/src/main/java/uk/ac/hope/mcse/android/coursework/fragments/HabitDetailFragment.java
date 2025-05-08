@@ -158,6 +158,10 @@ public class HabitDetailFragment extends Fragment {
         }
 
         Toast.makeText(getContext(), "Habit saved", Toast.LENGTH_SHORT).show();
+
+        // Send fragment result to notify list fragment that data has changed
+        getParentFragmentManager().setFragmentResult("habitUpdated", new Bundle());
+
         // Navigate back
         Navigation.findNavController(requireView()).navigateUp();
     }
@@ -166,6 +170,10 @@ public class HabitDetailFragment extends Fragment {
         if (currentHabit != null) {
             repository.deleteHabit(currentHabit.getId());
             Toast.makeText(getContext(), "Habit deleted", Toast.LENGTH_SHORT).show();
+
+            // Send fragment result to notify list fragment that data has changed
+            getParentFragmentManager().setFragmentResult("habitUpdated", new Bundle());
+
             Navigation.findNavController(requireView()).navigateUp();
         }
     }

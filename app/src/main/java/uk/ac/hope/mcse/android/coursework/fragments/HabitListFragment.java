@@ -73,6 +73,13 @@ public class HabitListFragment extends Fragment {
         updateUI();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getParentFragmentManager().setFragmentResultListener("habitUpdated", this,
+                (requestKey, result) -> updateUI());
+    }
+
     private void updateUI() {
         // Get habits and update adapter
         repository.getAllHabits(habits -> {
