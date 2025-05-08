@@ -38,6 +38,9 @@ dependencies {
 
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation(libs.room.common.jvm)
+    annotationProcessor("androidx.room:room-compiler:2.7.1")
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)

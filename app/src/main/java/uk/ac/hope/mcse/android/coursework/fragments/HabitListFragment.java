@@ -15,11 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
 import uk.ac.hope.mcse.android.coursework.R;
 import uk.ac.hope.mcse.android.coursework.adapters.HabitAdapter;
-import uk.ac.hope.mcse.android.coursework.models.Habit;
 import uk.ac.hope.mcse.android.coursework.repositories.HabitRepository;
 
 public class HabitListFragment extends Fragment {
@@ -38,31 +35,32 @@ public class HabitListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        repository = new HabitRepository(); // In a real app, this would be injected or retrieved from a singleton
+        // Initialize repository with application context
+        repository = new HabitRepository(requireActivity().getApplication());
 
         // Initialize views
         recyclerView = view.findViewById(R.id.habit_list_recyclerview);
         emptyView = view.findViewById(R.id.empty_view);
-        FloatingActionButton fabAddHabit = view.findViewById(R.id.fab_add_habit);
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new HabitAdapter(getContext(), habits -> {
-            // Handle habit completion
-            repository.completeHabit(habits.getId());
-            updateUI();
-        }, habit -> {
-            // Navigate to habit detail
-            Bundle args = new Bundle();
-            args.putString("habitId", habit.getId());
-            Navigation.findNavController(view).navigate(R.id.action_habitListFragment_to_habitDetailFragment, args);
-        });
+        adapter = new HabitAdapter(getContext(),
+                // Habit completion callback
+                habit -> {
+                    repository.completeHabit(habit.getId());
+                    updateUI();
+                },
+                // Habit click callback
+                habit -> {
+                    Bundle args = new Bundle();
+                    args.putString("habitId", habit.getId());
+                    Navigation.findNavController(view).navigate(R.id.action_habitListFragment_to_habitDetailFragment, args);
+
+                }
+        );
         recyclerView.setAdapter(adapter);
 
-        // Set up FAB click listener
-        fabAddHabit.setOnClickListener(v ->
-                Navigation.findNavController(view).navigate(R.id.action_habitListFragment_to_habitDetailFragment)
-        );
+
 
         // Load data
         updateUI();
@@ -71,19 +69,25 @@ public class HabitListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Refresh data when returning to this fragment
         updateUI();
     }
 
     private void updateUI() {
-        List<Habit> habits = repository.getAllHabits();
-        adapter.setHabits(habits);
+        // Get habits and update adapter
+        repository.getAllHabits(habits -> {
+            requireActivity().runOnUiThread(() -> {
+                adapter.setHabits(habits);
 
-        if (habits.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-        }
+                // Toggle visibility based on whether there are habits
+                if (habits.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
+            });
+        });
     }
 }

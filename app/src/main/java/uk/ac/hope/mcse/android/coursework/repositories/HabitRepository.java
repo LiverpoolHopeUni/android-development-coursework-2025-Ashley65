@@ -1,39 +1,79 @@
 package uk.ac.hope.mcse.android.coursework.repositories;
 
-import java.util.ArrayList;
+import android.app.Application;
+import androidx.lifecycle.LiveData;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import uk.ac.hope.mcse.android.coursework.database.HabitDao;
+import uk.ac.hope.mcse.android.coursework.database.HabitDatabase;
 import uk.ac.hope.mcse.android.coursework.models.Habit;
 
-
 public class HabitRepository {
-    private Map<String, Habit> habits = new HashMap<>();
+    private final HabitDao habitDao;
+    private final LiveData<List<Habit>> allHabits;
+    private final ExecutorService executorService;
+
+    public HabitRepository(Application application) {
+        HabitDatabase database = HabitDatabase.getDatabase(application);
+        habitDao = database.habitDao();
+        allHabits = habitDao.getAllHabits();
+        executorService = Executors.newSingleThreadExecutor();
+    }
+
+    public LiveData<List<Habit>> getAllHabits() {
+        return allHabits;
+    }
+
+    public LiveData<List<Habit>> getDailyHabits() {
+        return habitDao.getDailyHabits();
+    }
+
+    public LiveData<List<Habit>> getWeeklyHabits() {
+        return habitDao.getWeeklyHabits();
+    }
+
+    public void getHabit(String id, final HabitCallback callback) {
+        executorService.execute(() -> {
+            Habit habit = habitDao.getHabitById(id);
+            callback.onHabitLoaded(habit);
+        });
+    }
 
     public void addHabit(Habit habit) {
-        habits.put(habit.getId(), habit);
+        executorService.execute(() -> habitDao.insert(habit));
     }
 
-    public Habit getHabit(String id) {
-        return habits.get(id);
+    public void updateHabit(Habit habit) {
+        executorService.execute(() -> habitDao.update(habit));
     }
-    public List<Habit> getAllHabits() {
-        return new ArrayList<>(habits.values());
-    }
-    public void updateHabit(Habit habit){
-        if (habits.containsKey(habit.getId())) {
-            habits.put(habit.getId(), habit);
-        }
-    }
+
     public void deleteHabit(String id) {
-        habits.remove(id);
+        executorService.execute(() -> habitDao.deleteById(id));
     }
-    public void completeHabit(String id){
-        Habit habit = habits.get(id);
-        if (habit != null) {
-            habit.incrementCompletedCount();
-            habits.put(id, habit);
-        }
+    // Get all habits with a callback
+    public void getAllHabits(OnHabitsLoadedListener listener) {
+        // Implementation depends on your database setup
+    }
+
+    // Interface for the callback
+    public interface OnHabitsLoadedListener {
+        void onHabitsLoaded(List<Habit> habits);
+    }
+
+
+    public void completeHabit(String id) {
+        executorService.execute(() -> {
+            Habit habit = habitDao.getHabitById(id);
+            if (habit != null) {
+                habit.incrementCompletedCount();
+                habitDao.update(habit);
+            }
+        });
+    }
+
+    public interface HabitCallback {
+        void onHabitLoaded(Habit habit);
     }
 }

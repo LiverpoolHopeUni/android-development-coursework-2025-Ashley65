@@ -26,20 +26,6 @@ import uk.ac.hope.mcse.android.coursework.repositories.HabitRepository;
 
 public class HabitDetailFragment extends Fragment {
 
-    private TextInputEditText titleEdit;
-    private TextInputEditText descriptionEdit;
-    private TextInputEditText frequencyEdit;
-    private AutoCompleteTextView frequencyTypeDropdown;
-    private TextView createdDateText;
-    private TextView completedCountText;
-    private TextView lastCompletedText;
-    private Button saveButton;
-    private Button deleteButton;
-
-    private HabitRepository repository;
-    private Habit currentHabit;
-    private String habitId;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,9 +36,10 @@ public class HabitDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        repository = new HabitRepository(); // In a real app, this would be injected or retrieved from a singleton
+        // Initialize repository
+        repository = new HabitRepository(requireActivity().getApplication());
 
-        // Initialize views
+        // Initialize UI components
         titleEdit = view.findViewById(R.id.title_edit);
         descriptionEdit = view.findViewById(R.id.description_edit);
         frequencyEdit = view.findViewById(R.id.frequency_edit);
@@ -64,35 +51,54 @@ public class HabitDetailFragment extends Fragment {
         deleteButton = view.findViewById(R.id.delete_button);
 
         // Set up frequency type dropdown
-        String[] frequencyTypes = new String[]{"Daily", "Weekly"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, frequencyTypes);
+        String[] frequencyTypes = {"Daily", "Weekly"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                frequencyTypes
+        );
         frequencyTypeDropdown.setAdapter(adapter);
 
         // Get habit ID from arguments if editing an existing habit
         if (getArguments() != null && getArguments().containsKey("habitId")) {
             habitId = getArguments().getString("habitId");
-            currentHabit = repository.getHabit(habitId);
-
-            if (currentHabit != null) {
-                populateFields(currentHabit);
-                deleteButton.setVisibility(View.VISIBLE);
-            } else {
-                // Handle error - habit not found
-                Toast.makeText(getContext(), "Habit not found", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(view).navigateUp();
-            }
+            loadHabit(habitId);
+            deleteButton.setVisibility(View.VISIBLE);
         } else {
-            // New habit
+            // New habit, hide delete button
             deleteButton.setVisibility(View.GONE);
-            createdDateText.setText("Not created yet");
-            completedCountText.setText("Completed: 0 times");
-            lastCompletedText.setText("Not completed yet");
+
+            // Hide statistics card for new habits
+            view.findViewById(R.id.stats_card).setVisibility(View.GONE);
         }
 
         // Set up button click listeners
         saveButton.setOnClickListener(v -> saveHabit());
         deleteButton.setOnClickListener(v -> deleteHabit());
+    }
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+    private TextInputEditText titleEdit;
+    private TextInputEditText descriptionEdit;
+    private TextInputEditText frequencyEdit;
+    private AutoCompleteTextView frequencyTypeDropdown;
+    private TextView createdDateText;
+    private TextView completedCountText;
+    private TextView lastCompletedText;
+    private Button saveButton;
+    private Button deleteButton;
+
+    private HabitRepository repository;
+    private String habitId;
+    private Habit currentHabit;
+
+
+    private void loadHabit(String id) {
+        repository.getHabit(id, habit -> {
+            if (habit != null) {
+                currentHabit = habit;
+                requireActivity().runOnUiThread(() -> populateFields(habit));
+            }
+        });
     }
 
     private void populateFields(Habit habit) {
@@ -106,16 +112,17 @@ public class HabitDetailFragment extends Fragment {
 
         if (habit.getLastCompletedDate() != null) {
             lastCompletedText.setText("Last completed: " + dateFormat.format(habit.getLastCompletedDate()));
+            lastCompletedText.setVisibility(View.VISIBLE);
         } else {
-            lastCompletedText.setText("Not completed yet");
+            lastCompletedText.setVisibility(View.GONE);
         }
     }
 
     private void saveHabit() {
-        String title = titleEdit.getText() != null ? titleEdit.getText().toString().trim() : "";
+        String title = titleEdit.getText().toString().trim();
         String description = descriptionEdit.getText() != null ? descriptionEdit.getText().toString().trim() : "";
         String frequencyStr = frequencyEdit.getText() != null ? frequencyEdit.getText().toString().trim() : "";
-        String frequencyType = frequencyTypeDropdown.getText() != null ? frequencyTypeDropdown.getText().toString() : "";
+        String frequencyType = frequencyTypeDropdown.getText() != null ? frequencyTypeDropdown.getText().toString().trim() : "";
 
         // Validate inputs
         if (title.isEmpty() || frequencyStr.isEmpty() || frequencyType.isEmpty()) {
@@ -150,16 +157,16 @@ public class HabitDetailFragment extends Fragment {
             repository.addHabit(newHabit);
         }
 
+        Toast.makeText(getContext(), "Habit saved", Toast.LENGTH_SHORT).show();
         // Navigate back
         Navigation.findNavController(requireView()).navigateUp();
-        Toast.makeText(getContext(), "Habit saved", Toast.LENGTH_SHORT).show();
     }
 
     private void deleteHabit() {
         if (currentHabit != null) {
             repository.deleteHabit(currentHabit.getId());
-            Navigation.findNavController(requireView()).navigateUp();
             Toast.makeText(getContext(), "Habit deleted", Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(requireView()).navigateUp();
         }
     }
 }
