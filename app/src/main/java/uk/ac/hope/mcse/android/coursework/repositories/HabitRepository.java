@@ -2,6 +2,8 @@ package uk.ac.hope.mcse.android.coursework.repositories;
 
 import android.app.Application;
 import androidx.lifecycle.LiveData;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,9 +55,21 @@ public class HabitRepository {
         executorService.execute(() -> habitDao.deleteById(id));
     }
     // Get all habits with a callback
+    // In HabitRepository.java
     public void getAllHabits(OnHabitsLoadedListener listener) {
-        // Implementation depends on your database setup
+        executorService.execute(() -> {
+            List<Habit> habitList = new ArrayList<>();
+            // Convert LiveData to List
+            try {
+                // Either get from the LiveData or directly from the DAO
+                habitList = habitDao.getAllHabitsAsList(); // You might need to add this method to your DAO
+                listener.onHabitsLoaded(habitList);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
+
 
     // Interface for the callback
     public interface OnHabitsLoadedListener {

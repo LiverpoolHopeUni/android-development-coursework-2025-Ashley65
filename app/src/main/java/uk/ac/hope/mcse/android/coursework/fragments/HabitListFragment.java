@@ -35,6 +35,9 @@ public class HabitListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        getParentFragmentManager().setFragmentResultListener("habitUpdated", this,
+                (requestKey, result) -> updateUI());
+
         // Initialize repository with application context
         repository = new HabitRepository(requireActivity().getApplication());
 

@@ -37,4 +37,9 @@ public interface HabitDao {
 
     @Query("SELECT * FROM habits WHERE isDaily = 0 ORDER BY title ASC")
     LiveData<List<Habit>> getWeeklyHabits();
+
+    // In HabitDao.java
+    @Query("SELECT * FROM habits ORDER BY title ASC")
+    List<Habit> getAllHabitsAsList();
+
 }
