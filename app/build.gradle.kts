@@ -38,9 +38,10 @@ dependencies {
 
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation("androidx.room:room-runtime:2.7.1")
+    implementation(libs.androidx.room.runtime)
     implementation(libs.room.common.jvm)
-    annotationProcessor("androidx.room:room-compiler:2.7.1")
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)

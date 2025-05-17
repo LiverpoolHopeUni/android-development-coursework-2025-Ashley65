@@ -41,7 +41,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/description_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
                 android:inputType="textMultiLine"
                 android:minLines="2" />
 
@@ -100,7 +100,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -126,6 +126,7 @@
                     android:textAppearance="?attr/textAppearanceBody2"
                     tools:text="Completed: 5 times" />
 
+
                 <TextView
                     android:id="@+id/last_completed_text"
                     android:layout_width="match_parent"
@@ -137,16 +138,79 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/stats_detail_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stats_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Statistics"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/streak_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Current streak: 0 days" />
+
+                <TextView
+                    android:id="@+id/adherence_rate_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Adherence rate: 0%" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/adherence_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:progress="0"
+                    app:trackThickness="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Completion Trend (7 days)"
+                    android:textStyle="bold" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/completion_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
         <Button
             android:id="@+id/save_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="44dp"
             android:layout_marginEnd="8dp"
             android:text="Save"
             app:layout_constraintEnd_toStartOf="@+id/delete_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stats_card" />
+            app:layout_constraintTop_toBottomOf="@+id/stats_detail_card" />
 
         <Button
             android:id="@+id/delete_button"
@@ -154,12 +218,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="44dp"
             android:text="Delete"
             android:textColor="@android:color/holo_red_dark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/save_button"
-            app:layout_constraintTop_toBottomOf="@+id/stats_card" />
+            app:layout_constraintTop_toBottomOf="@+id/stats_detail_card" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
