@@ -8,8 +8,9 @@
         android:title="Settings"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_challenges"
-        android:orderInCategory="100"
-        android:title="Challenges"
+        android:id="@+id/action_toggle_theme"
+        android:orderInCategory="101"
+        android:title="Toggle Theme"
         app:showAsAction="never" />
+
 </menu>

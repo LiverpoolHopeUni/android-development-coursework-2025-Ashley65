@@ -15,7 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -95,6 +97,7 @@ public class HabitDetailFragment extends Fragment {
         });
 
 
+
         Button testNotificationButton = view.findViewById(R.id.testNotificationButton);
         if (testNotificationButton != null) {
             testNotificationButton.setOnClickListener(v -> testNotification());
@@ -137,6 +140,8 @@ public class HabitDetailFragment extends Fragment {
     private TextView adherenceRateText;
     private LinearProgressIndicator adherenceProgressBar;
     private LineChart completionChart;
+
+
 
 
 

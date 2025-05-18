@@ -13,6 +13,10 @@
         <action
             android:id="@+id/action_habitListFragment_to_habitDetailFragment"
             app:destination="@id/habitDetailFragment" />
+        <action
+            android:id="@+id/action_habitListFragment_to_habitCompletionsFragment"
+            app:destination="@id/habitCompletionsFragment" />
+
     </fragment>
 
     <fragment
@@ -30,6 +34,7 @@
         <action
             android:id="@+id/action_habitDetailFragment_to_reminderSettingsFragment"
             app:destination="@id/reminderSettingsFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/reminderSettingsFragment"
@@ -56,5 +61,15 @@
         android:name="uk.ac.hope.mcse.android.coursework.fragments.CreateChallengeFragment"
         android:label="Create Challenge"
         tools:layout="@layout/fragment_create_challenge" />
+
+    <fragment
+        android:id="@+id/habitCompletionsFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.fragments.HabitCompletionsFragment"
+        android:label="Completed Tasks"
+        tools:layout="@layout/fragment_habit_completions">
+        <argument
+            android:name="habitId"
+            app:argType="string" />
+    </fragment>
 
 </navigation>
