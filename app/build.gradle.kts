@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.room.common.jvm)
     annotationProcessor(libs.androidx.room.compiler)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation(libs.gson)
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)

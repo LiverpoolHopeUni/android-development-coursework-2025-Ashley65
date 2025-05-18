@@ -27,5 +27,34 @@
         <action
             android:id="@+id/action_habitDetailFragment_to_habitListFragment"
             app:destination="@id/habitListFragment" />
+        <action
+            android:id="@+id/action_habitDetailFragment_to_reminderSettingsFragment"
+            app:destination="@id/reminderSettingsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/reminderSettingsFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.fragments.ReminderSettingsFragment"
+        android:label="Reminder Settings"
+        tools:layout="@layout/fragment_reminder_settings">
+        <argument
+            android:name="habitId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/challengesFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.fragments.ChallengesFragment"
+        android:label="Challenges"
+        tools:layout="@layout/fragment_challenges">
+
+        <action
+            android:id="@+id/action_challengesFragment_to_createChallengeFragment"
+            app:destination="@id/createChallengeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createChallengeFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.fragments.CreateChallengeFragment"
+        android:label="Create Challenge"
+        tools:layout="@layout/fragment_create_challenge" />
+
 </navigation>

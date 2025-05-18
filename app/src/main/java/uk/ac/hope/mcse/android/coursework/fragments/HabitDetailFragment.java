@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 import uk.ac.hope.mcse.android.coursework.R;
 import uk.ac.hope.mcse.android.coursework.models.Habit;
 import uk.ac.hope.mcse.android.coursework.repositories.HabitRepository;
+import uk.ac.hope.mcse.android.coursework.utils.ReminderReceiver;
 
 public class HabitDetailFragment extends Fragment {
 
@@ -45,6 +46,8 @@ public class HabitDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_habit_detail, container, false);
     }
+    private uk.ac.hope.mcse.android.coursework.utils.ReminderReceiver ReminderReceiver = new uk.ac.hope.mcse.android.coursework.utils.ReminderReceiver();
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -80,6 +83,22 @@ public class HabitDetailFragment extends Fragment {
                 frequencyTypes
         );
         frequencyTypeDropdown.setAdapter(adapter);
+
+        Button reminderSettingsButton = view.findViewById(R.id.reminderSettingsButton);
+        reminderSettingsButton.setOnClickListener(v -> {
+            if (currentHabit != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("habitId", currentHabit.getId());
+                Navigation.findNavController(v).navigate(
+                        R.id.action_habitDetailFragment_to_reminderSettingsFragment, bundle);
+            }
+        });
+
+
+        Button testNotificationButton = view.findViewById(R.id.testNotificationButton);
+        if (testNotificationButton != null) {
+            testNotificationButton.setOnClickListener(v -> testNotification());
+        }
 
         // Get habit ID from arguments if editing an existing habit
         if (getArguments() != null && getArguments().containsKey("habitId")) {
@@ -120,6 +139,35 @@ public class HabitDetailFragment extends Fragment {
     private LineChart completionChart;
 
 
+
+    private void testNotification() {
+        if (currentHabit == null) {
+            Toast.makeText(requireContext(), "Please save the habit first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Get current time plus 15 seconds
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, 15); // Set notification for 15 seconds from now
+
+        // Set reminder properties on the habit
+        currentHabit.setReminderEnabled(true);
+        currentHabit.setReminderTime(calendar.getTimeInMillis());
+
+        // Save the habit
+        repository.updateHabit(currentHabit);
+
+        // Schedule notification
+        uk.ac.hope.mcse.android.coursework.utils.ReminderReceiver.scheduleReminder(
+                requireContext(),
+                currentHabit,
+                calendar.getTimeInMillis()
+        );
+
+        Toast.makeText(requireContext(),
+                "Notification scheduled for 15 seconds from now",
+                Toast.LENGTH_LONG).show();
+    }
     private void loadHabit(String id) {
         repository.getHabit(id, habit -> {
             if (habit != null) {

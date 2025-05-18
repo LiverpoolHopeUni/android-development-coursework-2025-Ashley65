@@ -87,6 +87,27 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <Button
+            android:id="@+id/reminderSettingsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Set Reminder"
+            app:icon="@android:drawable/ic_popup_reminder"
+            app:layout_constraintTop_toBottomOf="@id/delete_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <Button
+            android:id="@+id/testNotificationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Test Notification (15s)"
+            app:icon="@drawable/ic_notification"
+            app:layout_constraintTop_toBottomOf="@id/reminderSettingsButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/stats_card"
             android:layout_width="match_parent"

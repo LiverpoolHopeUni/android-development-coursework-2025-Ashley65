@@ -26,6 +26,27 @@ public class Habit {
     private int completedCount;
     private int currentStreak;
 
+    // Add these fields to the Habit class
+    private boolean reminderEnabled;
+    private long reminderTime; // Store time in milliseconds
+
+    // Add getters and setters
+    public boolean isReminderEnabled() {
+        return reminderEnabled;
+    }
+
+    public void setReminderEnabled(boolean reminderEnabled) {
+        this.reminderEnabled = reminderEnabled;
+    }
+
+    public long getReminderTime() {
+        return reminderTime;
+    }
+
+    public void setReminderTime(long reminderTime) {
+        this.reminderTime = reminderTime;
+    }
+
     // Constructor for creating a new habit
     public Habit(String title, String description, int frequency, boolean isDaily) {
         this.id = UUID.randomUUID().toString();

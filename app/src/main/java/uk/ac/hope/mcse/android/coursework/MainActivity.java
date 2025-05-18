@@ -11,7 +11,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,10 +28,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set up the toolbar
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         FloatingActionButton fab = findViewById(R.id.fab_add_habit);
 
-        // Get NavController using the correct ID from content_main.xml
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        // Get NavController properly by using NavHostFragment
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        navController = navHostFragment.getNavController();
+
+        // Setup bottom navigation
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        if (bottomNav != null) {
+            // Define top-level destinations
+            appBarConfiguration = new AppBarConfiguration.Builder(
+                    R.id.habitListFragment, R.id.challengesFragment)
+                    .build();
+
+            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+            NavigationUI.setupWithNavController(bottomNav, navController);
+        }
 
         // Set up destination changed listener
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
@@ -46,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
                 });
             } else if (destination.getId() == R.id.habitDetailFragment) {
                 // Hide FAB on the detail screen
+                fab.setVisibility(View.GONE);
+            } else if (destination.getId() == R.id.challengesFragment) {
+                // Hide FAB on challenges screen or repurpose it
                 fab.setVisibility(View.GONE);
             }
         });
@@ -62,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_challenges) {
+            navController.navigate(R.id.challengesFragment);
             return true;
         }
         return super.onOptionsItemSelected(item);
